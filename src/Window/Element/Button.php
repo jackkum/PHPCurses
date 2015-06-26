@@ -36,8 +36,10 @@ class Button extends Element {
 		if(is_null($this->_style)){
 			$this->_style = new Window\Style($this);
 			$this->_style->setColorPair(
-				Colors::setPair('defaultButton', Colors::BLACK, Colors::CYAN)
+				Colors::setPair('defaultButton', Colors::WHITE, Colors::RED)
 			);
+			
+			$this->_style->setBorders(FALSE);
 		}
 		
 		$this->_style->setRows(1);

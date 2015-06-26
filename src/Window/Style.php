@@ -22,6 +22,7 @@ namespace jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Colors;
 use jackkum\PHPCurses\Exception;
+use jackkum\PHPCurses\Logger;
 
 class Style {
 	
@@ -69,6 +70,13 @@ class Style {
 	protected $_parent;
 	
 	/**
+	 * 
+	 * @var integer
+	 */
+	protected $_zIndex = 0;
+
+
+	/**
 	 * constructor
 	 * @param integer $rows
 	 * @param integer $cols
@@ -99,6 +107,7 @@ class Style {
 		if(is_null($this->_colorPair)){
 			$this->_colorPair = Colors::setPair('defaultWindow');
 		}
+		
 	}
 	
 	/**
@@ -154,6 +163,7 @@ class Style {
 		}
 		
 		if($this->_borders){
+			Logger::debug(get_class($this->_parent)."->_syle->_borders = ".var_export($this->_borders, true));
 			// draw borders
 			ncurses_wborder(
 				$window, 
@@ -182,6 +192,16 @@ class Style {
 		$this->_borders = $borders;
 	}
 	
+	public function setZIndex($zIndex)
+	{
+		$this->_zIndex = $zIndex;
+	}
+
+	public function getZIndex()
+	{
+		return $this->_zIndex;
+	}
+
 	/**
 	 * getter for window rows
 	 * @return integer

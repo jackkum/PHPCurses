@@ -8,6 +8,7 @@ use jackkum\PHPCurses\Application;
 use jackkum\PHPCurses\Factory;
 use jackkum\PHPCurses\Keyboard;
 use jackkum\PHPCurses\Logger;
+use jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Window\Element\Toolbar;
 
 class MyApp extends Application {
@@ -18,9 +19,7 @@ class MyApp extends Application {
 	
 	public function onCreate()
 	{
-		Logger::debug("Create toolbar");
-		$this->toolbar = new MyToolbar($this); 
-		Logger::debug("toolbar->show()");
+		$this->toolbar = new MyToolbar($this, Toolbar::POSITION_BOTTOM); 
 		$this->toolbar->show(); 
 	}
 
@@ -53,7 +52,15 @@ class MyApp extends Application {
 			 * user press key "Enter"
 			 */
 			case Keyboard::ENTER:
-				Factory::messageBox("Help window", "Help text\nsdsdfsdfssdfsd sdfsdf sdfsdfsdf sdfsdfs sdfsdfsdf sdfsdfsdfsdf sdsdfsdf sdsdfsdf sdfsdfsdf sdfsdfsdf dfsdfsdf\nsdfsdfsdfsdf sdfsdf sdfsd\nsdfsdfsdf sdfsdsdf\ndfdfgdfgdfgdfg\ndfgdfgdfgdfgdfgdfgdfgdf\ndfgdfdfgdfg\n", $this);
+				Factory::messageBox(
+					"Help window", 
+					"Help text\nsdsdfsdfssdfsd sdfsdf sdfsdfsdf sdfsdfs "
+						. "sdfsdfsdf sdfsdfsdfsdf sdsdfsdf sdsdfsdf sdfsdfsdf "
+						. "sdfsdfsdf dfsdfsdf\nsdfsdfsdfsdf sdfsdf sdfsd\n"
+						. "sdfsdfsdf sdfsdsdf\ndfdfgdfgdfgdfg\ndfgdfgdfgdf"
+						. "gdfgdfgdfgdf\ndfgdfdfgdfg\n", 
+					$this
+				);
 				break;
 			
 			/**
@@ -63,7 +70,13 @@ class MyApp extends Application {
 				exit();
 				
 			case Keyboard::F1:
-				Factory::messageBox("Help window", "Help text\nsdsdfsdfsdfsdfsdf\nsdfsdfsdfsdf sdfsdf sdfsd\nsdfsdfsdf sdfsdsdf\ndfdfgdfgdfgdfg\ndfgdfgdfgdfgdfgdfgdfgdf\ndfgdfdfgdfg\n", $this);
+				Factory::messageBox(
+					"Help window", 
+					"Help text\nsdsdfsdfsdfsdfsdf\nsdfsdfsdfsdf sdfsdf sdfsd\n"
+						. "sdfsdfsdf sdfsdsdf\ndfdfgdfgdfgdfg\ndfgdfgdfgdfgdf"
+						. "gdfgdfgdf\ndfgdfdfgdfg\n", 
+					$this
+				);
 				break;
 			
 			/**
@@ -105,14 +118,10 @@ class MyToolbar extends Toolbar {
 
 
 // get app instance
-Logger::debug("MyApp::getInstance()");
 $app = MyApp::getInstance();
 // usr mouse on app
-Logger::debug("MyApp::useMouse()");
 $app->useMouse();
 // show application
-Logger::debug("MyApp::show()");
 $app->show();
 // listen keyboars an mouse
-Logger::debug("MyApp::loop()");
 $app->loop();

@@ -54,13 +54,16 @@ abstract class Application extends Window {
 		// chick init curses
 		Factory::getCurses();
 		
-		// reinit colors
-		$this->_colorPair = Colors::setPair('defaultApplication', Colors::WHITE, Colors::BLUE);
+		$this->_style = new Window\Style($this);
+		$this->_style->setColorPair(
+			Colors::setPair('defaultToolbar', Colors::WHITE, Colors::BLUE)
+		);
+		// app window should be always in background
+		$this->_style->setZIndex(-1);
 		
 		// call parent
 		parent::__construct();
 		
-		Logger::debug("Init application");
 	}
 	
 	/**
@@ -145,7 +148,7 @@ abstract class Application extends Window {
 	 * @param NCWindow|null $parent
 	 * @return array
 	 */
-	public function & getAllWindows(Window & $parent)
+	public function getAllWindows(Window $parent)
 	{
 		$windows = array();
 		
@@ -153,14 +156,22 @@ abstract class Application extends Window {
 			$windows = array_merge($windows, $this->getAllWindows($window));
 		}
 		
+		usort($windows, array($this, '_sortWindowsByZIndex'));
+		
 		return $windows;
 	}
 	
+	private function _sortWindowsByZIndex(Window $w1, Window $w2)
+	{
+		return $w1->getStyle()->getZIndex() < $w2->getStyle()->getZIndex();
+	}
+
+
 	/**
 	 * getting active window
 	 * @return Window
 	 */
-	public function & getActiveWindow()
+	public function getActiveWindow()
 	{
 		$windows = $this->getAllWindows($this);
 		

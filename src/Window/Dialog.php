@@ -62,7 +62,8 @@ class Dialog extends Window {
 		$top  = ceil($rows / 2) - ceil($this->getStyle()->getRows() / 2);
 		$left = ceil($cols / 2) - ceil($this->getStyle()->getCols() / 2);
 		
-		$this->_style->setRect($rows, $cols, $left, $top);
+		$this->_style->setOffsetLeft($left);
+		$this->_style->setOffsetTop($top);
 	}
 	
 	private function split($line)
@@ -113,11 +114,12 @@ class Dialog extends Window {
 			$ready = array_merge($ready, $this->split($line));
 		}
 		
+		$style    = $this->getStyle();
 		$parent   = $this->getParentWindow();
 		$maxLines = $parent->getStyle()->getRows() - 4;
-		$this->getStyle()->setRows(count($ready)+3);
-		if($this->getStyle()->getRows() > $maxLines){
-			$this->getStyle()->setRows($maxLines);
+		$style->setRows(count($ready)+3);
+		if($style->getRows() > $maxLines){
+			$style->setRows($maxLines);
 			foreach($ready as $i => $line){
 				if($i >= $maxLines){
 					unset($ready[$i]);
@@ -130,10 +132,8 @@ class Dialog extends Window {
 	
 	public function onCreate()
 	{
-		Logger::debug("Create toolbar");
 		$this->_buttons = new Toolbar($this, Toolbar::POSITION_BOTTOM, Toolbar::ALIGN_RIGHT);
 		
-		Logger::debug("Add buttons");
 		$this->_buttons->addItem(array(
 			'text'   => 'OK',
 			'name'   => 'OK',
@@ -146,7 +146,6 @@ class Dialog extends Window {
 			'method' => 'cancel'
 		));
 		
-		Logger::debug("Show toolbar");
 		$this->_buttons->show();
 	}
 	
