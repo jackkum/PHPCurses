@@ -17,6 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace jackkum\PHPCurses\Window;
+
+use jackkum\PHPCurses\Logger;
+use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Window\Element\Toolbar;
+use jackkum\PHPCurses\Colors;
+
 class Dialog extends Window {
 	
 	const STATUS_CANCEL = 0;
@@ -26,16 +33,21 @@ class Dialog extends Window {
 	protected $_content;
 	protected $_buttons;
 	
-	protected $_rows  = 5;
-	protected $_cols  = 50;
-	protected $_left  = 30;
-	protected $_top   = 8;
-	
 	public function __construct($title, $content, Window & $parent = NULL)
 	{
-		$this->_colorPair = Colors::setPair('defaultDialog', Colors::WHITE, Colors::MAGENTA);
+		if(is_null($this->_style)){
+			$this->_style = new Window\Style($this);
+			$this->_style->setColorPair(
+				Colors::setPair('defaultToolbar', Colors::WHITE, Colors::MAGENTA)
+			);
+		}
 		
 		parent::__construct($parent);
+		
+		$this->_style->setRows(5);
+		$this->_style->setCols(50);
+		$this->_style->setOffsetLeft(30);
+		$this->_style->setOffsetTop(8);
 		
 		$this->_title   = $title;
 		$this->_content = $this->prepareContent($content);
@@ -44,16 +56,18 @@ class Dialog extends Window {
 		$app->onResize();
 		
 		$rows = $app->getStyle()->getRows();
-		$cols = $app->etStyle()->getCols();
+		$cols = $app->getStyle()->getCols();
 		
-		$this->_top  = ceil($rows / 2) - ceil($this->_rows / 2);
-		$this->_left = ceil($cols / 2) - ceil($this->_cols / 2);
+		$top  = ceil($rows / 2) - ceil($this->getStyle()->getRows() / 2);
+		$left = ceil($cols / 2) - ceil($this->getStyle()->getCols() / 2);
+		
+		$this->_style->setRect($rows, $cols, $left, $top);
 	}
 	
 	private function split($line)
 	{
 		$ready   = array();
-		$maxLine = ($this->_cols - 4);
+		$maxLine = ($this->getStyle()->getCols() - 4);
 		
 		if(mb_strlen($line) <= $maxLine){
 			return array($line);
@@ -100,9 +114,9 @@ class Dialog extends Window {
 		
 		$parent         = $this->getParentWindow();
 		$maxLines       = $parent->getStyle()->getRows() - 4;
-		$this->_rows    = count($ready)+3;
-		if($this->_rows > $maxLines){
-			$this->_rows = $maxLines;
+		$this->getStyle()->setRows(count($ready)+3);
+		if($this->getStyle()->getRows() > $maxLines){
+			$this->getStyle()->setRows($maxLines);
 			foreach($ready as $i => $line){
 				if($i >= $maxLines){
 					unset($ready[$i]);
@@ -134,14 +148,14 @@ class Dialog extends Window {
 	
 	public function success()
 	{
-		Log::debug("success()");
+		Logger::debug("success()");
 		$this->_status = self::STATUS_OK;
 		$this->close();
 	}
 	
 	public function cancel()
 	{
-		Log::debug("cancel()");
+		Logger::debug("cancel()");
 		$this->_status = self::STATUS_CANCEL;
 		$this->close();
 	}

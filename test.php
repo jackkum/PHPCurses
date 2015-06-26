@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 
@@ -6,15 +7,18 @@ require __DIR__ . '/vendor/autoload.php';
 use jackkum\PHPCurses\Application;
 use jackkum\PHPCurses\Factory;
 use jackkum\PHPCurses\Keyboard;
+use jackkum\PHPCurses\Window\Element\Toolbar;
 
 class MyApp extends Application {
+	
+	protected $_title = "My application title";
 	
 	private $toolbar = null;
 	
 	public function onCreate()
 	{
-		//$this->toolbar = new MyToolbar($this);
-		//$this->toolbar->show();
+		//$this->toolbar = new MyToolbar($this); 
+		//$this->toolbar->show(); 
 	}
 
 	public function onMouseClick($top, $left)
@@ -23,17 +27,17 @@ class MyApp extends Application {
 			// its a child message
 			return TRUE;
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * keyboard event
 	 * @param type $key
 	 */
 	public function onKeyPress($key)
 	{
-		
+
 		// call application listener
 		if(parent::onKeyPress($key)){
 			// its a child message
@@ -70,3 +74,38 @@ class MyApp extends Application {
 		return TRUE;
 	}
 }
+
+class MyToolbar extends Toolbar {
+	protected $_items = array(
+		array(
+			'text'   => '[F1] Help',
+			'name'   => 'help',
+			'method' => 'help'
+		),
+		array(
+			'text'   => '[F10] Exit',
+			'name'   => 'exit',
+			'method' => 'quit'
+		)
+	);
+	
+	private function help()
+	{
+		Logger::debug("help method called");
+	}
+	
+	private function quit()
+	{
+		exit();
+	}
+}
+
+
+// get app instance
+$app = MyApp::getInstance();
+// usr mouse on app
+$app->useMouse();
+// show application
+$app->show();
+// listen keyboars an mouse
+$app->loop();

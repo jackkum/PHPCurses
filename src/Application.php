@@ -19,7 +19,11 @@
 
 namespace jackkum\PHPCurses;
 
+use jackkum\PHPCurses\Factory;
 use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Logger;
+use jackkum\PHPCurses\Exception;
 
 abstract class Application extends Window {
 	
@@ -55,17 +59,25 @@ abstract class Application extends Window {
 		
 		// call parent
 		parent::__construct();
+		
+		Logger::debug("Init application");
 	}
 	
 	/**
 	 * create singleton
+	 * 
+	 * @throws Exception
 	 * @return self
 	 */
 	final public static function & getInstance()
 	{
 		$class = get_called_class();
-
+		
         if( ! isset(static::$_instance)){
+			if($class === 'jackkum\PHPCurses\Application'){
+				throw new Exception("Cannot instantiate abstract class Application");
+			}
+			
             static::$_instance = new $class();
 		}
 
@@ -79,6 +91,7 @@ abstract class Application extends Window {
 	 */
 	public function onQuit()
 	{
+		Logger::debug("Quit application");
 		if($this->getError()){
 			echo $this->getError(), PHP_EOL;
 		} else {
@@ -91,7 +104,12 @@ abstract class Application extends Window {
 	{
 		parent::onResize();
 		
-		ncurses_getmaxyx($this->_window, $this->_rows, $this->_cols);
+		$rows = NULL;
+		$cols = NULL;
+		ncurses_getmaxyx($this->_window, $rows, $cols);
+		
+		$this->getStyle()->setRows($rows);
+		$this->getStyle()->setCols($cols);
 	}
 	
 	/**
@@ -99,6 +117,7 @@ abstract class Application extends Window {
 	 */
 	public function useMouse()
 	{
+		Logger::debug("Use mouse on application");
 		$newmask = NCURSES_ALL_MOUSE_EVENTS + NCURSES_REPORT_MOUSE_POSITION;
 		$mask    = ncurses_mousemask($newmask, $oldmask);
 	}
@@ -139,7 +158,7 @@ abstract class Application extends Window {
 	
 	/**
 	 * getting active window
-	 * @return NCWindow
+	 * @return Window
 	 */
 	public function & getActiveWindow()
 	{
@@ -160,7 +179,7 @@ abstract class Application extends Window {
 	 */
 	public function loop()
 	{
-		
+		Logger::debug("Loop application");
 		while(TRUE){
 			// check size windows
 			$this->onResize();
@@ -168,6 +187,7 @@ abstract class Application extends Window {
 			$this->reDraw();
 			// pressed key
 			$key = ncurses_getch();
+			Logger::debug("Key pressed: " . $key);
 			// wait event
 			$this->onKeyPress($key);
 		}

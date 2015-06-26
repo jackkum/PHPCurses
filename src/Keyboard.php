@@ -17,7 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class NCKeyboard {
+namespace jackkum\PHPCurses;
+
+abstract class Keyboard {
 	
 	CONST ESC         = 27;
 	CONST ENTER       = 13;

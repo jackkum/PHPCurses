@@ -19,6 +19,8 @@
 
 namespace jackkum\PHPCurses;
 
+use jackkum\PHPCurses\Exception;
+
 class Colors {
 	
 	private static $_pairs = array();
@@ -78,7 +80,7 @@ class Colors {
 	 * getting pair by associated name
 	 * @param string $name
 	 * @return integer
-	 * @throws NCException
+	 * @throws Exception
 	 */
 	public static function getPair($name)
 	{

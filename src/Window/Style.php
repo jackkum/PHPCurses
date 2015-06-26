@@ -19,6 +19,10 @@
 
 namespace jackkum\PHPCurses\Window;
 
+use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Exception;
+
 class Style {
 	
 	/**
@@ -93,7 +97,7 @@ class Style {
 		}
 		
 		if(is_null($this->_colorPair)){
-			$this->_colorPair = NCColors::setPair('defaultWindow');
+			$this->_colorPair = Colors::setPair('defaultWindow');
 		}
 	}
 	
@@ -168,6 +172,16 @@ class Style {
 		
 	}
 	
+	public function setColorPair($pair)
+	{
+		$this->_colorPair = $pair;
+	}
+	
+	public function setBorders($borders)
+	{
+		$this->_borders = $borders;
+	}
+	
 	/**
 	 * getter for window rows
 	 * @return integer
@@ -175,6 +189,11 @@ class Style {
 	public function getRows()
 	{
 		return $this->_rows;
+	}
+	
+	public function setRows($rows)
+	{
+		$this->_rows = $rows;
 	}
 	
 	/**
@@ -186,6 +205,11 @@ class Style {
 		return $this->_cols;
 	}
 	
+	public function setCols($cols)
+	{
+		$this->_cols = $cols;
+	}
+	
 	/**
 	 * getter for window top offset
 	 * @return integer
@@ -195,6 +219,11 @@ class Style {
 		return $this->_top;
 	}
 	
+	public function setOffsetTop($top)
+	{
+		$this->_top = $top;
+	}
+	
 	/**
 	 * 
 	 * @return integer
@@ -202,6 +231,11 @@ class Style {
 	public function getOffsetLeft()
 	{
 		return $this->_left;
+	}
+	
+	public function setOffsetLeft($left)
+	{
+		$this->_left = $left;
 	}
 	
 	/**

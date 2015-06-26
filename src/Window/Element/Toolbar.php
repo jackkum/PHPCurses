@@ -17,6 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace jackkum\PHPCurses\Window\Element;
+
+use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Window\Button;
+use jackkum\PHPCurses\Window\Element;
+
 class Toolbar extends Element {
 	
 	const POSITION_TOP    = 0;
@@ -57,13 +64,18 @@ class Toolbar extends Element {
 	
 	/**
 	 * 
-	 * @param NCWindow $parent
+	 * @param Window $parent
 	 * @param integer $position
 	 */
-	public function __construct(NCWindow &$parent = NULL, $position = self::POSITION_TOP, $aligment = self::ALIGN_LEFT)
+	public function __construct(Window &$parent = NULL, $position = self::POSITION_TOP, $aligment = self::ALIGN_LEFT)
 	{
-		// reinit colors
-		$this->_colorPair = NCColors::setPair('defaultToolbar', NCColors::WHITE, NCColors::CYAN);
+		
+		if(is_null($this->_style)){
+			$this->_style = new Window\Style($this);
+			$this->_style->setColorPair(
+				Colors::setPair('defaultToolbar', Colors::WHITE, Colors::CYAN)
+			);
+		}
 		
 		// toolbar position
 		$this->_position = $position;
@@ -92,27 +104,31 @@ class Toolbar extends Element {
 		// create window
 		parent::create();
 		
+		$style = $this->getStyle();
+		
 		if($this->_aligment == self::ALIGN_LEFT){
 			// left offset
-			$left = $this->_left;
+			$left = $style->getOffsetLeft();
+			$top  = $style->getOffsetTop();
 			foreach($this->_items as $item){
 				$button = $this->_createItem($item);
 				$width  = $button->getButtonWidth();
 				
-				$button->setRect(1, $width, $left, $this->_top);
+				$button->getStyle()->setRect(1, $width, $left, $top);
 				
 				$left += $width + 1;
 			}
 		} else {
 			// left offset
-			$left = $this->_left + $this->_cols;
+			$left = $style->getOffsetLeft() + $this->getCols();
+			$top  = $style->getOffsetTop();
 			foreach(array_reverse($this->_items) as $item){
 				$button = $this->_createItem($item);
 				$width  = $button->getButtonWidth();
 				$left  -= $width;
 				$left   = $left < 1 ? 1 : $left;
 				
-				$button->setRect(1, $width, $left, $this->_top);
+				$button->getStyle()->setRect(1, $width, $left, $top);
 				
 				if( ! --$left) { break; }
 			}
@@ -144,7 +160,7 @@ class Toolbar extends Element {
 		$text   = isset($item['text'])   ? $item['text']   : NULL;
 		$method = isset($item['method']) ? $item['method'] : NULL;
 		
-		$this->_elements[$name] = new NCButton($text, array($this->getParentWindow(), $method), $this);
+		$this->_elements[$name] = new Button($text, array($this->getParentWindow(), $method), $this);
 		
 		return $this->_elements[$name];
 	}
@@ -167,16 +183,18 @@ class Toolbar extends Element {
 		$parent = $this->getParentWindow();
 		// refresh window size
 		$parent->onResize();
+		// get current style
+		$style = $this->getStyle();
 		// width toolbar
-		$this->_cols = $parent->getStyle()->getCols() - 2;
-		$this->_rows = 1;
-		$this->_left = $parent->getStyle()->getOffsetLeft() + 1;
+		$style->setCols($parent->getStyle()->getCols() - 2);
+		$style->setRows(1);
+		$style->setOffsetLeft($parent->getStyle()->getOffsetLeft() + 1);
 		switch($this->_position){
 			case self::POSITION_TOP:
-				$this->_top = $parent->getStyle()->getOffsetTop() + 1;
+				$style->setOffsetTop($parent->getStyle()->getOffsetTop() + 1);
 				break;
 			case self::POSITION_BOTTOM:
-				$this->_top = ($parent->getStyle()->getOffsetTop() + $parent->getStyle()->getRows()) - 2;
+				$style->setOffsetTop(($parent->getStyle()->getOffsetTop() + $parent->getStyle()->getRows()) - 2);
 				break;
 		}
 		

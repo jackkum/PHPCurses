@@ -17,7 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-abstract class NCPanel {
+namespace jackkum\PHPCurses;
+
+use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Factory;
+
+abstract class Panel {
 	
 	CONST POS_TOP    = 0;
 	CONST POS_BOTTOM = 1;
@@ -26,7 +31,7 @@ abstract class NCPanel {
 
 	/**
 	 * window object
-	 * @var NCWindow
+	 * @var Window
 	 */
 	protected $_window;
 	
@@ -36,7 +41,7 @@ abstract class NCPanel {
 	 */
 	protected $_panel;
 	
-	public function __construct(NCWindow & $window)
+	public function __construct(Window & $window)
 	{
 		$this->_window = $window;
 		$window->addPanel($this);
@@ -53,7 +58,7 @@ abstract class NCPanel {
 	
 	/**
 	 * get window object
-	 * @return NCWindow
+	 * @return Window
 	 */
 	public function getParent()
 	{
@@ -68,7 +73,7 @@ abstract class NCPanel {
 		$this->_panel = ncurses_new_panel($this->getParent()->getWindow());
 		
 		if (empty($this->_panel)) {
-			NCFactory::fatalError('Unable to create panel');
+			Factory::fatalError('Unable to create panel');
 		}
 	}
 	

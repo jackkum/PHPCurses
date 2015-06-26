@@ -20,6 +20,7 @@
 namespace jackkum\PHPCurses\Window;
 
 use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Window;
 
 abstract class Element extends Window {
 	
@@ -27,14 +28,12 @@ abstract class Element extends Window {
 
 	public function __construct(Window & $parent = NULL)
 	{
-		if(is_null($this->_colorPair)){
-			// colors
-			$this->_colorPair = Colors::setPair('defaultElement', Colors::WHITE, Colors::CYAN);
-		}
 		
-		if(is_null($this->_borders)){
-			// no borders
-			$this->_borders   = FALSE;
+		if(is_null($this->_style)){
+			$this->_style = new Window\Style($this);
+			$this->_style->setColorPair(
+				Colors::setPair('defaultElement', Colors::WHITE, Colors::CYAN)
+			);
 		}
 		
 		parent::__construct($parent);

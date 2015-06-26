@@ -1,12 +1,17 @@
 {
-    "name": "jackkum/php-curses",
-    "description": "Package for creating console apllication like mc on PHP language",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Евгений Куманин",
-            "email": "jackkum@bk.ru"
-        }
-    ],
-    "require": {}
+	"name": "jackkum/php-curses",
+	"description": "Package for creating console apllication like mc on PHP language",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Евгений Куманин",
+			"email": "jackkum@bk.ru"
+		}
+	],
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"jackkum\\PHPCurses\\" : "src/"
+		}
+	}
 }

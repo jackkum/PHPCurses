@@ -17,6 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace jackkum\PHPCurses\Window\Element;
+
+use jackkum\PHPCurses\Window;
+use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Window\Element;
+
 class Button extends Element {
 	
 	protected $_text;
@@ -27,11 +33,15 @@ class Button extends Element {
 		$this->_text     = $text;
 		$this->_callback = $callback;
 		
-		$this->_rows = 1;
-		$this->_cols = $this->getButtonWidth();
+		if(is_null($this->_style)){
+			$this->_style = new Window\Style($this);
+			$this->_style->setColorPair(
+				Colors::setPair('defaultButton', Colors::BLACK, Colors::CYAN)
+			);
+		}
 		
-		// button color
-		$this->_colorPair = Colors::setPair('defaultButton', Colors::BLACK, Colors::CYAN);
+		$this->_style->setRows(1);
+		$this->_style->setCols($this->getButtonWidth());
 		
 		parent::__construct($parent);
 	}

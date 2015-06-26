@@ -19,6 +19,12 @@
 
 namespace jackkum\PHPCurses;
 
+use jackkum\PHPCurses\Exception;
+use jackkum\PHPCurses\Application;
+use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Window\Element\Button;
+use jackkum\PHPCurses\Window\Dialog;
+
 class Factory {
 	
 	/**
@@ -50,20 +56,24 @@ class Factory {
 	{
 		
 		if ( ! posix_isatty(STDOUT)) {
-			NCFactory::fatalError('Wrong terminal');
+			Factory::fatalError('Wrong terminal');
+		}
+		
+		if( ! function_exists('ncurses_init')){
+			Factory::fatalError('Project require ncurses');
 		}
 		
 		if( ! self::$_curses){
 			ncurses_init();
 			ncurses_noecho();
 			
-			if(NCColors::hasColors()){
-				NCColors::start();
+			if(Colors::hasColors()){
+				Colors::start();
 			}
 			
 			self::$_curses = TRUE;
-			register_shutdown_function(array('NCFactory', 'endCurses'));
-			set_error_handler(array('NCFactory', 'errorHandler'));
+			register_shutdown_function(array('jackkum\\PHPCurses\\Factory', 'endCurses'));
+			set_error_handler(array('jackkum\\PHPCurses\\Factory', 'errorHandler'));
 		}
 		
 		return self::$_curses;
@@ -81,7 +91,7 @@ class Factory {
 		}
 		
 		// call onQuit on application
-		NCApplication::getInstance()->onQuit();
+		Application::getInstance()->onQuit();
 	}
 	
 	/**
@@ -90,7 +100,11 @@ class Factory {
 	 */
 	public static function fatalError($message)
 	{
-		NCApplication::getInstance()->setError($message);
+		try {
+			Application::getInstance()->setError($message);
+		} catch (Exception $ex) {
+			trigger_error($message);
+		}
 		exit;
 	}
 	
@@ -104,7 +118,7 @@ class Factory {
 	public static function errorHandler($code, $message, $file, $line)
 	{
 		$error = sprintf("# %d => %s\n\t%s", $line, $file, $message);
-		NCApplication::getInstance()->setError($error);
+		Application::getInstance()->setError($error);
 	}
 	
 	/**
@@ -112,9 +126,9 @@ class Factory {
 	 * @param string $title
 	 * @param string $text
 	 */
-	public static function messageBox($title, $text, NCWindow & $parent = NULL)
+	public static function messageBox($title, $text, Window & $parent = NULL)
 	{
-		$dialog = new NCDialog($title, $text, $parent);
+		$dialog = new Dialog($title, $text, $parent);
 		$dialog->show();
 	}
 	
@@ -122,11 +136,11 @@ class Factory {
 	 * create new button
 	 * @param String $text
 	 * @param callable $callback
-	 * @return \NCButton
+	 * @return \Button
 	 */
 	public static function & createButton($text, callable $callback)
 	{
-		return new NCButton($text, $callback);
+		return new Button($text, $callback);
 	}
 	
 }

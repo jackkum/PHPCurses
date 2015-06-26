@@ -19,6 +19,10 @@
 
 namespace jackkum\PHPCurses;
 
+use jackkum\PHPCurses\Logger;
+use jackkum\PHPCurses\Application;
+use jackkum\PHPCurses\Window;
+
 abstract class Window {
 	
 	/**
@@ -300,7 +304,7 @@ abstract class Window {
 	 */
 	public function onResize()
 	{
-		Log::debug("onResize(".get_class($this).")");
+		Logger::debug("onResize(".get_class($this).")");
 	}
 	
 	/**
