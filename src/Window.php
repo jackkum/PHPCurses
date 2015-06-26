@@ -155,7 +155,6 @@ abstract class Window {
 	 */
 	public function create()
 	{
-		Logger::debug(get_class($this)."->getStyle()->create()");
 		$this->_window = $this->getStyle()->create();
 	}
 	
@@ -195,18 +194,13 @@ abstract class Window {
 	 */
 	public function show()
 	{
-		Logger::debug(get_class($this)."::show()");
 		$this->create();
-		Logger::debug(get_class($this)."::create()");
 		
 		foreach($this->_childs as $window){
-			Logger::debug(get_class($window)."::show()");
 			$window->show();
 		}
 		
-		Logger::debug(get_class($this)."::onCreate()");
 		$this->onCreate();
-		Logger::debug(get_class($this)."::activate()");
 		$this->activate();
 	}
 	
@@ -262,8 +256,9 @@ abstract class Window {
 	
 	public function isCollision($top, $left)
 	{
-		if($top >= $this->_top && $top <= ($this->_top + $this->_rows)){
-			if($left >= $this->_left && $left <= ($this->_left + $this->_cols)){
+		$style = $this->getStyle();
+		if($top >= $style->getOffsetTop() && $top <= ($style->getOffsetTop() + $style->getRows())){
+			if($left >= $style->getOffsetLeft() && $left <= ($style->getOffsetLeft() + $style->getCols())){
 				return TRUE;
 			}
 		}

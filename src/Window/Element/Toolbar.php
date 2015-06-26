@@ -76,6 +76,8 @@ class Toolbar extends Element {
 			$this->_style->setColorPair(
 				Colors::setPair('defaultToolbar', Colors::WHITE, Colors::CYAN)
 			);
+			
+			$this->_style->setBorders(FALSE);
 		}
 		
 		// toolbar position
@@ -100,14 +102,11 @@ class Toolbar extends Element {
 	public function create()
 	{
 		// calc positions
-		Logger::debug("Toolbar::_calculatePosition()");
 		$this->_calculatePosition();
 		
-		Logger::debug("Toolbar::parent::create()");
 		// create window
 		parent::create();
 		
-		Logger::debug("Toolbar::getStyle()");
 		$style = $this->getStyle();
 		
 		if($this->_aligment == self::ALIGN_LEFT){
@@ -124,7 +123,7 @@ class Toolbar extends Element {
 			}
 		} else {
 			// left offset
-			$left = $style->getOffsetLeft() + $this->getCols();
+			$left = $style->getOffsetLeft() + $style->getCols();
 			$top  = $style->getOffsetTop();
 			foreach(array_reverse($this->_items) as $item){
 				$button = $this->_createItem($item);
@@ -137,8 +136,6 @@ class Toolbar extends Element {
 				if( ! --$left) { break; }
 			}
 		}
-		
-		Logger::debug("Toolbar::~create()");
 	}
 	
 	/**

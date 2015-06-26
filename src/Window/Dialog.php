@@ -22,6 +22,7 @@ namespace jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Logger;
 use jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Window\Element\Toolbar;
+use jackkum\PHPCurses\Keyboard;
 use jackkum\PHPCurses\Colors;
 
 class Dialog extends Window {
@@ -112,8 +113,8 @@ class Dialog extends Window {
 			$ready = array_merge($ready, $this->split($line));
 		}
 		
-		$parent         = $this->getParentWindow();
-		$maxLines       = $parent->getStyle()->getRows() - 4;
+		$parent   = $this->getParentWindow();
+		$maxLines = $parent->getStyle()->getRows() - 4;
 		$this->getStyle()->setRows(count($ready)+3);
 		if($this->getStyle()->getRows() > $maxLines){
 			$this->getStyle()->setRows($maxLines);
