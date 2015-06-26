@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * Copyright (C) 2014 Евгений
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,172 +26,156 @@ use jackkum\PHPCurses\Logger;
 use jackkum\PHPCurses\Exception;
 
 abstract class Application extends Window {
-	
+
 	/**
 	 * Application title
 	 * @var string
 	 */
 	protected $_title = "Example application title";
-	
+
 	/**
 	 * last error
 	 * @var string|null
 	 */
 	protected $_error = NULL;
-	
+
 	/**
 	 * self instance
 	 * @var NCApplication
 	 */
 	protected static $_instance;
-	
-	
+
 	/**
 	 * 
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		// chick init curses
 		Factory::getCurses();
-		
+
 		$this->_style = new Window\Style($this);
 		$this->_style->setColorPair(
-			Colors::setPair('defaultToolbar', Colors::WHITE, Colors::BLUE)
+				Colors::setPair('defaultToolbar', Colors::WHITE, Colors::BLUE)
 		);
 		// app window should be always in background
 		$this->_style->setZIndex(-1);
-		
+
 		// call parent
 		parent::__construct();
-		
 	}
-	
+
 	/**
 	 * create singleton
 	 * 
 	 * @throws Exception
 	 * @return self
 	 */
-	final public static function & getInstance()
-	{
+	final public static function & getInstance() {
 		$class = get_called_class();
-		
-        if( ! isset(static::$_instance)){
-			if($class === 'jackkum\PHPCurses\Application'){
+
+		if (!isset(static::$_instance)) {
+			if ($class === 'jackkum\PHPCurses\Application') {
 				throw new Exception("Cannot instantiate abstract class Application");
 			}
-			
-            static::$_instance = new $class();
+
+			static::$_instance = new $class();
 		}
 
-        return static::$_instance;
+		return static::$_instance;
 	}
-	
+
 	/**
 	 * callend when application closed
 	 * no more curses, use any print methods
 	 * show application error or goodby message
 	 */
-	public function onQuit()
-	{
+	public function onQuit() {
 		Logger::debug("Quit application");
-		if($this->getError()){
+		if ($this->getError()) {
 			echo $this->getError(), PHP_EOL;
 		} else {
 			echo "Application finished", PHP_EOL;
 		}
-		
 	}
-	
-	public function onResize()
-	{
+
+	public function onResize() {
 		parent::onResize();
-		
+
 		$rows = NULL;
 		$cols = NULL;
 		ncurses_getmaxyx($this->_window, $rows, $cols);
-		
+
 		$this->getStyle()->setRows($rows);
 		$this->getStyle()->setCols($cols);
 	}
-	
+
 	/**
 	 * Allow use mouse on application
 	 */
-	public function useMouse()
-	{
+	public function useMouse() {
 		Logger::debug("Use mouse on application");
 		$newmask = NCURSES_ALL_MOUSE_EVENTS + NCURSES_REPORT_MOUSE_POSITION;
-		$mask    = ncurses_mousemask($newmask, $oldmask);
+		$mask = ncurses_mousemask($newmask, $oldmask);
 	}
-	
+
 	/**
 	 * set last error message
 	 * @param string $error
 	 */
-	public function setError($error)
-	{
+	public function setError($error) {
 		$this->_error = $error;
 	}
-	
+
 	/**
 	 * get last error message
 	 * @return string|null
 	 */
-	public function getError()
-	{
+	public function getError() {
 		return $this->_error;
 	}
-	
+
 	/**
 	 * build all windows array
 	 * @param NCWindow|null $parent
 	 * @return array
 	 */
-	public function getAllWindows(Window $parent)
-	{
+	public function getAllWindows(Window $parent) {
 		$windows = array();
-		
-		foreach($parent->getChilds() as $window){
+
+		foreach ($parent->getChilds() as $window) {
 			$windows = array_merge($windows, $this->getAllWindows($window));
 		}
-		
+
 		usort($windows, array($this, '_sortWindowsByZIndex'));
-		
+
 		return $windows;
 	}
-	
-	private function _sortWindowsByZIndex(Window $w1, Window $w2)
-	{
+
+	private function _sortWindowsByZIndex(Window $w1, Window $w2) {
 		return $w1->getStyle()->getZIndex() < $w2->getStyle()->getZIndex();
 	}
-
 
 	/**
 	 * getting active window
 	 * @return Window
 	 */
-	public function getActiveWindow()
-	{
+	public function getActiveWindow() {
 		$windows = $this->getAllWindows($this);
-		
-		foreach($windows as $window){
-			if($window->isActive()){
+
+		foreach ($windows as $window) {
+			if ($window->isActive()) {
 				return $window;
 			}
 		}
-		
+
 		return $this;
 	}
-	
-	
+
 	/**
 	 * loop listen keyboard and mouse
 	 */
-	public function loop()
-	{
+	public function loop() {
 		Logger::debug("Loop application");
-		while(TRUE){
+		while (TRUE) {
 			// check size windows
 			$this->onResize();
 			// redraw, some is change or only start
@@ -202,7 +186,6 @@ abstract class Application extends Window {
 			// wait event
 			$this->onKeyPress($key);
 		}
-		
 	}
-	
+
 }
