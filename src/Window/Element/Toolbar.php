@@ -21,8 +21,9 @@ namespace jackkum\PHPCurses\Window\Element;
 
 use jackkum\PHPCurses\Window;
 use jackkum\PHPCurses\Colors;
-use jackkum\PHPCurses\Window\Button;
+use jackkum\PHPCurses\Logger;
 use jackkum\PHPCurses\Window\Element;
+use jackkum\PHPCurses\Window\Element\Button;
 
 class Toolbar extends Element {
 	
@@ -67,7 +68,7 @@ class Toolbar extends Element {
 	 * @param Window $parent
 	 * @param integer $position
 	 */
-	public function __construct(Window &$parent = NULL, $position = self::POSITION_TOP, $aligment = self::ALIGN_LEFT)
+	public function __construct(Window $parent = NULL, $position = self::POSITION_TOP, $aligment = self::ALIGN_LEFT)
 	{
 		
 		if(is_null($this->_style)){
@@ -99,11 +100,14 @@ class Toolbar extends Element {
 	public function create()
 	{
 		// calc positions
+		Logger::debug("Toolbar::_calculatePosition()");
 		$this->_calculatePosition();
 		
+		Logger::debug("Toolbar::parent::create()");
 		// create window
 		parent::create();
 		
+		Logger::debug("Toolbar::getStyle()");
 		$style = $this->getStyle();
 		
 		if($this->_aligment == self::ALIGN_LEFT){
@@ -133,6 +137,8 @@ class Toolbar extends Element {
 				if( ! --$left) { break; }
 			}
 		}
+		
+		Logger::debug("Toolbar::~create()");
 	}
 	
 	/**
@@ -154,7 +160,7 @@ class Toolbar extends Element {
 		return $this->_elements[$name];
 	}
 	
-	private function & _createItem(array $item)
+	private function _createItem(array $item)
 	{
 		$name   = isset($item['name'])   ? $item['name']   : NULL;
 		$text   = isset($item['text'])   ? $item['text']   : NULL;

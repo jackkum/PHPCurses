@@ -126,7 +126,7 @@ class Style {
 	{
 		$window = $this->_parent->getWindow();
 		
-		if($window){
+		if(is_resource($window)){
 			ncurses_wclear($window);
 			ncurses_delwin($window);
 			$window = NULL;

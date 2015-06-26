@@ -22,6 +22,7 @@ namespace jackkum\PHPCurses;
 use jackkum\PHPCurses\Exception;
 use jackkum\PHPCurses\Application;
 use jackkum\PHPCurses\Colors;
+use jackkum\PHPCurses\Logger;
 use jackkum\PHPCurses\Window\Element\Button;
 use jackkum\PHPCurses\Window\Dialog;
 
@@ -41,7 +42,7 @@ class Factory {
 
 	/**
 	 * cant create factory
-	 * @throws NCException
+	 * @throws Exception
 	 */
 	private function __construct()
 	{
@@ -100,9 +101,12 @@ class Factory {
 	 */
 	public static function fatalError($message)
 	{
+		Logger::debug($message);
+		
 		try {
 			Application::getInstance()->setError($message);
 		} catch (Exception $ex) {
+			Logger::debug($ex);
 			trigger_error($message);
 		}
 		exit;
@@ -118,6 +122,7 @@ class Factory {
 	public static function errorHandler($code, $message, $file, $line)
 	{
 		$error = sprintf("# %d => %s\n\t%s", $line, $file, $message);
+		Logger::debug($error);
 		Application::getInstance()->setError($error);
 	}
 	
@@ -136,9 +141,9 @@ class Factory {
 	 * create new button
 	 * @param String $text
 	 * @param callable $callback
-	 * @return \Button
+	 * @return Button
 	 */
-	public static function & createButton($text, callable $callback)
+	public static function createButton($text, callable $callback)
 	{
 		return new Button($text, $callback);
 	}

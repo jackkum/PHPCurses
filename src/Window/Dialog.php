@@ -129,8 +129,10 @@ class Dialog extends Window {
 	
 	public function onCreate()
 	{
+		Logger::debug("Create toolbar");
 		$this->_buttons = new Toolbar($this, Toolbar::POSITION_BOTTOM, Toolbar::ALIGN_RIGHT);
 		
+		Logger::debug("Add buttons");
 		$this->_buttons->addItem(array(
 			'text'   => 'OK',
 			'name'   => 'OK',
@@ -143,6 +145,7 @@ class Dialog extends Window {
 			'method' => 'cancel'
 		));
 		
+		Logger::debug("Show toolbar");
 		$this->_buttons->show();
 	}
 	
@@ -164,7 +167,7 @@ class Dialog extends Window {
 	 * getting toolbar
 	 * @return Toolbar
 	 */
-	public function & getToolbar()
+	public function getToolbar()
 	{
 		return $this->_buttons;
 	}
@@ -179,6 +182,7 @@ class Dialog extends Window {
 		}
 		
 		ncurses_wrefresh($this->getWindow());
+		Logger::debug("refresh()");
 	}
 	
 	public function getStatus()

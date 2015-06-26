@@ -7,6 +7,7 @@ require __DIR__ . '/vendor/autoload.php';
 use jackkum\PHPCurses\Application;
 use jackkum\PHPCurses\Factory;
 use jackkum\PHPCurses\Keyboard;
+use jackkum\PHPCurses\Logger;
 use jackkum\PHPCurses\Window\Element\Toolbar;
 
 class MyApp extends Application {
@@ -17,8 +18,10 @@ class MyApp extends Application {
 	
 	public function onCreate()
 	{
-		//$this->toolbar = new MyToolbar($this); 
-		//$this->toolbar->show(); 
+		Logger::debug("Create toolbar");
+		$this->toolbar = new MyToolbar($this); 
+		Logger::debug("toolbar->show()");
+		$this->toolbar->show(); 
 	}
 
 	public function onMouseClick($top, $left)
@@ -102,10 +105,14 @@ class MyToolbar extends Toolbar {
 
 
 // get app instance
+Logger::debug("MyApp::getInstance()");
 $app = MyApp::getInstance();
 // usr mouse on app
+Logger::debug("MyApp::useMouse()");
 $app->useMouse();
 // show application
+Logger::debug("MyApp::show()");
 $app->show();
 // listen keyboars an mouse
+Logger::debug("MyApp::loop()");
 $app->loop();

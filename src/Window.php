@@ -73,6 +73,19 @@ abstract class Window {
 		}
 	}
 	
+	public function __call($method, $params)
+	{
+		Logger::debug("__call: ".get_class($this)."->".$method."()");
+		return call_user_func(array($this, $method), $params);
+	}
+	
+	public static function __callStatic($method, $params)
+	{
+		Logger::debug("__callStatic: ".get_called_class()."::".$method."()");
+		return call_user_func(array(get_called_class(), $method), $params);
+	}
+
+
 	/**
 	 * destruct window
 	 */
@@ -140,8 +153,9 @@ abstract class Window {
 	/**
 	 * create new window
 	 */
-	protected function create()
+	public function create()
 	{
+		Logger::debug(get_class($this)."->getStyle()->create()");
 		$this->_window = $this->getStyle()->create();
 	}
 	
@@ -181,13 +195,18 @@ abstract class Window {
 	 */
 	public function show()
 	{
+		Logger::debug(get_class($this)."::show()");
 		$this->create();
+		Logger::debug(get_class($this)."::create()");
 		
 		foreach($this->_childs as $window){
+			Logger::debug(get_class($window)."::show()");
 			$window->show();
 		}
 		
+		Logger::debug(get_class($this)."::onCreate()");
 		$this->onCreate();
+		Logger::debug(get_class($this)."::activate()");
 		$this->activate();
 	}
 	
