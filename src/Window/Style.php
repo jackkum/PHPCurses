@@ -163,7 +163,6 @@ class Style {
 		}
 		
 		if($this->_borders){
-			Logger::debug(get_class($this->_parent)."->_syle->_borders = ".var_export($this->_borders, true));
 			// draw borders
 			ncurses_wborder(
 				$window, 

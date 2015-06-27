@@ -101,16 +101,19 @@ abstract class Window {
 	 * add new child to current window
 	 * @param Window $window
 	 */
-	public function addChild(Window & $window)
+	public function addChild(Window $window)
 	{
 		$this->_childs[] = $window;
+		$window->getStyle()->setZIndex(
+			(int) $this->getStyle()->getZIndex() + 1
+		);
 	}
 	
 	/**
 	 * remove child window
 	 * @param Window $window
 	 */
-	public function removeChild(Window & $window)
+	public function removeChild(Window $window)
 	{
 		foreach($this->_childs as $i => $child){
 			if($child === $window){
@@ -305,8 +308,8 @@ abstract class Window {
 		
 		$this->refresh();
 		
-		foreach($this->_childs as $_window){
-			$_window->refresh();
+		foreach($this->_childs as $window){
+			$window->refresh();
 		}
 		
 	}
